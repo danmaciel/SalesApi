@@ -38,7 +38,7 @@ public class DebtService : IDebtervice {
 
     public ICollection<ReadDebtDto> GetByCustomerId(int customerId)
     {
-       var result = _context.Debts.FromSqlRaw($"SELECT * FROM Debts WHERE CustomerId = {customerId} AND Active = 1");
+       var result = _context.Debts.Where(debt => debt.CustomerId == customerId && debt.Active == 1).ToList();
        return _mapper.Map<List<ReadDebtDto>>(result).ToList();
     }
 
@@ -105,8 +105,7 @@ public class DebtService : IDebtervice {
 
     public bool HasDebitsPendinPayment(int userId)
     {
-        var result = _context.Debts.FromSqlRaw($"SELECT * FROM Debts WHERE CustomerId = {userId} AND PaidAt IS NULL").Count();
-        return result > 0;
+        return _context.Debts.Any(debt => debt.CustomerId == userId && debt.Active == 1 && debt.PaidAt == null);
     }
 
 }
