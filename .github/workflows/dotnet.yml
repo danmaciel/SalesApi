@@ -22,10 +22,10 @@ jobs:
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '7.0.x'
+          dotnet-version: '10.0.x'
 
       - name: Restore
-        run: dotnet restore SalesApi.sln
+        run: dotnet restore SalesApi.sln -p:NuGetAudit=true
 
       - name: Build
         run: dotnet build SalesApi.sln --configuration Release --no-restore
