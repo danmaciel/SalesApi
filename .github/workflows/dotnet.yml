@@ -29,3 +29,12 @@ jobs:
 
       - name: Build
         run: dotnet build SalesApi.sln --configuration Release --no-restore
+
+      - name: Restore tests
+        run: dotnet restore tests/SalesApi.Tests/SalesApi.Tests.csproj -p:NuGetAudit=true
+
+      - name: Run tests
+        run: dotnet test tests/SalesApi.Tests/SalesApi.Tests.csproj --configuration Release --no-restore --logger "console;verbosity=normal"
+
+      - name: Audit dependencies
+        run: dotnet list SalesApi.csproj package --vulnerable --include-transitive --format json > nuget-audit.json && python3 -c 'import json,sys; data=json.load(open("nuget-audit.json")); found=[p for project in data.get("projects",[]) for framework in project.get("frameworks",[]) for p in framework.get("topLevelPackages",[])+framework.get("transitivePackages",[]) if p.get("vulnerabilities")]; print("Vulnerable packages:", len(found)); sys.exit(1 if found else 0)'
