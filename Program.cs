@@ -110,3 +110,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Exposes the top-level host entry point to integration tests.
+public partial class Program { }
