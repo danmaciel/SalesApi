@@ -21,8 +21,8 @@ public class TokenService{
             new Claim("loginTimestamp", DateTime.UtcNow.ToString()),
          };
 
-        //var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Aqweq012010102AAcczafghhsdsderdasda"));
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("SymmetricSecurityKey")["value"]!));
+        var secret = _configuration["SymmetricSecurityKey:value"] ?? throw new InvalidOperationException("JWT signing key is not configured.");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         
         var token = new JwtSecurityToken(

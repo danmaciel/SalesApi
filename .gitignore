@@ -1,3 +1,29 @@
 Database/
 bin/
 .vscode/
+
+# Build output
+**/bin/
+**/obj/
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+appsettings.Local.json
+appsettings.Production.json
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/*.sqlite
+**/*.sqlite3
