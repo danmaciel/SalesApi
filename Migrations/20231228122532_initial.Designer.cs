@@ -12,7 +12,7 @@ namespace SalesApi.Migrations
 {
     [DbContext(typeof(SalesContext))]
     [Migration("20231228122532_initial")]
-    partial class initial
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
