@@ -13,6 +13,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure this secret through dotnet user-secrets or an environment variable.
+var jwtSigningKey = builder.Configuration["SymmetricSecurityKey:value"];
+if (string.IsNullOrWhiteSpace(jwtSigningKey) || Encoding.UTF8.GetByteCount(jwtSigningKey) < 32)
+{
+    throw new InvalidOperationException("Configure SymmetricSecurityKey:value with at least 32 UTF-8 bytes using user-secrets or an environment variable.");
+}
+
 // Add services to the container.
 
 builder.Services.AddDbContext<SalesContext>(
@@ -75,9 +82,7 @@ builder.Services.AddAuthentication(
         options.RequireHttpsMetadata = false;
         options.SaveToken = true;
         options.TokenValidationParameters = new TokenValidationParameters{
-            ValidateIssuerSigningKey= true,
-            //IssuerSigningKey= new SymmetricSecurityKey(Encoding.UTF8.GetBytes("Aqweq012010102AAcczafghhsdsderdasda")),
-            IssuerSigningKey= new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("SymmetricSecurityKey")["value"]!)),
+            ValidateIssuerSigningKey= true,            IssuerSigningKey= new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSigningKey)),
             ClockSkew= TimeSpan.Zero,
             ValidateIssuer = false,
             ValidateAudience = false
