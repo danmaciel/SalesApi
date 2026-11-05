@@ -61,7 +61,7 @@ public sealed class HttpIntegrationTests : IAsyncLifetime
             password
         });
         Assert.Equal(HttpStatusCode.OK, login.StatusCode);
-        var token = await login.Content.ReadFromJsonAsync<string>();
+        var token = (await login.Content.ReadAsStringAsync()).Trim('"');
         Assert.False(string.IsNullOrWhiteSpace(token));
 
         using var request = new HttpRequestMessage(HttpMethod.Get, "/Customer");
