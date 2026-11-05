@@ -1,10 +1,8 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.Extensions.Configuration;
 using Xunit;
 
 namespace SalesApi.Tests;
@@ -14,20 +12,21 @@ public sealed class HttpIntegrationTests : IAsyncLifetime
     private const string TestSigningKey = "test-only-http-integration-signing-key-1234567890";
     private readonly string _dbPath = Path.Combine(Path.GetTempPath(), $"salesapi-test-{Guid.NewGuid():N}.db");
     private WebApplicationFactory<Program> _factory = null!;
+    private string? _previousKey;
+    private string? _previousConnection;
     private HttpClient _client = null!;
 
     public Task InitializeAsync()
     {
+        // Program validates this setting before WebApplicationFactory can override
+        // app configuration, so supply it before the host is created.
+        _previousKey = Environment.GetEnvironmentVariable("SymmetricSecurityKey__value");
+        _previousConnection = Environment.GetEnvironmentVariable("ConnectionStrings__WebApiDatabase");
+        Environment.SetEnvironmentVariable("SymmetricSecurityKey__value", TestSigningKey);
+        Environment.SetEnvironmentVariable("ConnectionStrings__WebApiDatabase", $"Data Source={_dbPath}");
+
         _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
-        {
-            builder.UseEnvironment("Testing");
-            builder.ConfigureAppConfiguration((_, configuration) =>
-                configuration.AddInMemoryCollection(new Dictionary<string, string?>
-                {
-                    ["SymmetricSecurityKey:value"] = TestSigningKey,
-                    ["ConnectionStrings:WebApiDatabase"] = $"Data Source={_dbPath}"
-                }));
-        });
+            builder.UseEnvironment("Testing"));
         _client = _factory.CreateClient(new WebApplicationFactoryClientOptions
         {
             AllowAutoRedirect = false
@@ -88,5 +87,7 @@ public sealed class HttpIntegrationTests : IAsyncLifetime
         _client?.Dispose();
         if (_factory is not null) await _factory.DisposeAsync();
         if (File.Exists(_dbPath)) File.Delete(_dbPath);
+        Environment.SetEnvironmentVariable("SymmetricSecurityKey__value", _previousKey);
+        Environment.SetEnvironmentVariable("ConnectionStrings__WebApiDatabase", _previousConnection);
     }
 }
