@@ -61,7 +61,7 @@ public class DebtController : ControllerBase{
             return CreatedAtAction(nameof(GetById), new {id = customer.Id}, customer);
         }catch (InvalidOperationException e) {
             return Problem(statusCode: 406, detail: e.Message);
-        } catch (Exception e) {
+        } catch (Exception) {
             throw new ApplicationException("Ocorreum um erro na criação da venda!");
         } 
         

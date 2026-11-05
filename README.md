@@ -1,6 +1,6 @@
 # SalesApi
 
-ASP.NET Core Web API project with SQLite and JWT authentication.
+ASP.NET Core 10 Web API project with SQLite and JWT authentication.
 
 ## Local security configuration
 
@@ -28,4 +28,4 @@ dotnet restore
 dotnet build
 ```
 
-The project currently targets .NET 7, which is out of support. Upgrade to a supported .NET LTS release as a separate compatibility task.
+The project targets .NET 10 LTS. Run `dotnet restore`, `dotnet build`, and review NuGet package audit output before deployment.
