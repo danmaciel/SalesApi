@@ -98,7 +98,7 @@ A suíte cobre geração/validação de JWT, comportamento com chave ausente, ma
 
 - O projeto atualmente utiliza uma única API e SQLite local; não implementa microsserviços, mensageria ou alta disponibilidade.
 - O token JWT é emitido com validade de 30 dias, sem fluxo de refresh token/revogação.
-- O arquivo `DebtService.cs` tem consultas SQL interpoladas em `FromSqlRaw` que devem ser substituídas por consultas LINQ ou parâmetros antes de uso em produção.
+- As consultas de débitos que usavam SQL interpolado foram substituídas por consultas LINQ no `DebtService`. Os testes de regressão cobrem os filtros relacionados a clientes e débitos pendentes. A aplicação ainda requer revisão de autorização e configuração antes de qualquer uso em produção.
 - A execução automática de migrations na inicialização é prática para estudo, mas requer estratégia controlada em produção.
 - Expandir os testes de regras de negócio, tratamento de erros e persistência.
 - Validar configuração de HTTPS e autenticação no ambiente de implantação.
